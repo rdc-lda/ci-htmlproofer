@@ -1,5 +1,4 @@
 FROM ruby:alpine
-MAINTAINER Robin Huiser <robin@rdc.pt>
 
 # Install Tini - https://github.com/krallin/tini
 RUN apk add --no-cache tini
