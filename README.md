@@ -1,6 +1,6 @@
-# CI build Docker: htmlproofer
+# CI build Docker: HTML Proofer
 
-CI Docker image for performing HTML proofing
+CI Docker image for performing HTML proofing based upon Ruby Gem [html-proofer](https://github.com/gjtorikian/html-proofer).
 
 ## Getting Started
 
@@ -10,18 +10,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 In order to develop / test, you need the following tools installed:
 
-* [Docker](https://docs.docker.com/docker-for-mac/install/) 
+* [Docker](https://docs.docker.com/docker-for-mac/install/)
 * [GNU Make](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/) 3.8 or higher
-
-### And coding style tests
-
-All documents should respect the Markdown language (install a linter in your studio), the following [Vuepress Markdown extensions](https://vuepress.vuejs.org/guide/markdown.html) and [Vuepress enhanced Examples](http://vuepress-enhanced-examples.surge.sh/#overview) can be used.
 
 ## Built With
 
 * Docker
 
-### Build Docker with Tini bundled
+### Build Docker
 
 ~~~bash
 # Build the Docker locally
@@ -38,10 +34,41 @@ Use the Docker image in your CI tooling, an examples for have been provided belo
 
 ### CircleCI
 
-Just copy the HTML under the `dist/` directory to your webserver and you should be good to go.
+Just copy the YAML into your build definition:
 
 ~~~yaml
+  # Validate the generated HTML
+  validate:
+    docker:
+      - image: rdclda/ci-htmlproofer:latest
+    working_directory: ~/my-html
+    environment:
+      VUEPRESS_BUILD_DIR: dist
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/my-html
 
+      # Test the generated HTML
+      - run:
+          name: Test our generated HTML files
+          command: |
+            htmlproofer $VUEPRESS_BUILD_DIR --allow-hash-href --check-html \
+            --empty-alt-ignore --disable-external
+~~~
+
+...and enable to validate step after the build phase in the overall flow:
+
+~~~yaml
+# Glue the jobs together
+workflows:
+  version: 2
+  build_and_publish:
+    jobs:
+      - build
+      - validate:
+          requires:
+            - build
 ~~~
 
 ## Contributing
