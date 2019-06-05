@@ -41,13 +41,13 @@ Just copy the YAML into your build definition:
   validate:
     docker:
       - image: rdclda/ci-htmlproofer:latest
-    working_directory: ~/my-html
+    working_directory: ~/my-project
     environment:
       VUEPRESS_BUILD_DIR: dist
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ~/my-html
+          at: ~/my-project
 
       # Test the generated HTML
       - run:
